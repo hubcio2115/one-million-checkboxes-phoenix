@@ -1,19 +1,20 @@
 import { InfiniteScroll } from "@inertiajs/react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { base64ToBuffer, getBit, setBit } from "~/lib/binary-utils";
 import { Spinner } from "./ui/spinner";
 
+/** 1_000_000 / 8 bits  */
+const TOTAL_BYTES = 125_000;
 const COLUMNS = 40;
-const TOTAL_BYTES = 125_000; // 1_000_000 bits / 8
 
 export interface CheckboxPage {
   data: string[];
   meta: {
-    current_page: number;
-    next_page: number | null;
-    previous_page: number | null;
-    page_name: string;
+    currentPage: number;
+    nextPage: number | null;
+    previousPage: number | null;
+    pageName: string;
   };
 }
 
@@ -25,18 +26,11 @@ interface CheckboxGridProps {
 export function CheckboxGrid({ checkboxes, rowsPerChunk }: CheckboxGridProps) {
   const { data: chunks } = checkboxes;
 
-  // Create the buffer promise once per component lifetime. Wrapping in Promise.resolve().then()
-  // ensures it's always async so React can show the Suspense fallback for at least one frame.
-  const [initPromise] = useState<Promise<Uint8Array>>(() =>
-    Promise.resolve().then(() => {
-      const buf = new Uint8Array(TOTAL_BYTES);
-      buf.set(base64ToBuffer(chunks[0]), 0);
-      return buf;
-    }),
-  );
-
-  // Suspends on first render until the buffer is ready; on retry returns the resolved value.
-  const initialBuffer = use(initPromise);
+  const initialBuffer = (() => {
+    const buf = new Uint8Array(TOTAL_BYTES);
+    buf.set(base64ToBuffer(chunks[0]), 0);
+    return buf;
+  })();
 
   // First chunk is already in the buffer from the promise above.
   const byteBuffer = useRef(initialBuffer);
@@ -49,6 +43,7 @@ export function CheckboxGrid({ checkboxes, rowsPerChunk }: CheckboxGridProps) {
     for (let i = loadedChunksRef.current; i < chunks.length; i++) {
       byteBuffer.current.set(base64ToBuffer(chunks[i]), i * rowsPerChunk * 5);
     }
+
     loadedChunksRef.current = chunks.length;
   }, [chunks.length, rowsPerChunk]);
 
@@ -73,7 +68,7 @@ export function CheckboxGrid({ checkboxes, rowsPerChunk }: CheckboxGridProps) {
     <div className="relative h-125 w-full border border-[#ccc]">
       <div ref={parentRef} className="h-full w-full overflow-auto">
         <InfiniteScroll data="checkboxes" onlyNext buffer={5}>
-          {({ loadingNext }) => (
+          {({ loading }) => (
             <>
               <div
                 className="relative mx-auto"
@@ -102,7 +97,7 @@ export function CheckboxGrid({ checkboxes, rowsPerChunk }: CheckboxGridProps) {
                 )}
               </div>
 
-              {loadingNext && (
+              {loading && (
                 <div className="absolute inset-0 flex items-center justify-center bg-white/50">
                   <Spinner className="size-10" />
                 </div>
