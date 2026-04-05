@@ -32,7 +32,7 @@ config :esbuild,
   version: "0.21.5",
   million_checkboxes: [
     args:
-      ~w(js/app.tsx --bundle --chunk-names=chunks/[name]-[hash] --splitting --format=esm  --target=es2023 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
+      ~w(js/app.tsx --bundle --chunk-names=chunks/[name]-[hash] --splitting --format=esm  --target=es2023 --outdir=../priv/static/assets --external:/fonts/* --external:/images/* --external:axios),
     cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ],

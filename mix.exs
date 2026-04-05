@@ -40,7 +40,7 @@ defmodule MillionCheckboxes.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:inertia, "~> 2.0"},
+      {:inertia, github: "inertiajs/inertia-phoenix", branch: "3.x"},
       {:phoenix, "~> 1.8.5"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
@@ -85,7 +85,8 @@ defmodule MillionCheckboxes.MixProject do
         "esbuild ssr",
         "phx.digest"
       ],
-      precommit: ["compile --warnings-as-errors", "deps.unlock --unused", "format", "test"]
+      test: ["cmd --cd assets pnpm test", "test"],
+      precommit: ["compile --warnings-as-errors", "deps.unlock --unused", "format", "cmd --cd assets pnpm test", "test"]
     ]
   end
 end

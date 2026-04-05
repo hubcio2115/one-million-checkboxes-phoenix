@@ -2,9 +2,6 @@
    https://tailwindcss.com/docs/configuration */
 
 @import "tailwindcss";
-
-/* Use the data attribute for dark mode  */
-@import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 

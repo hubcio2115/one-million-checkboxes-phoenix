@@ -1,18 +1,19 @@
-import axios from "axios";
-
-import { createInertiaApp } from "@inertiajs/react";
-import { StrictMode, type ReactNode } from "react";
+import { createInertiaApp, router } from "@inertiajs/react";
+import { StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";
 import RootLayout from "./Layout";
 
-axios.defaults.xsrfHeaderName = "x-csrf-token";
+router.on("before", (event) => {
+  const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute("content");
+  if (token) {
+    event.detail.visit.headers["x-csrf-token"] = token;
+  }
+});
 
 createInertiaApp({
+  layout: () => RootLayout,
   resolve: async (name) => {
     const page = await import(`./pages/${name}.tsx`);
-    page.default.layout =
-      page.default.layout || ((page: ReactNode) => <RootLayout>{page}</RootLayout>);
-
     return page;
   },
   setup({ App, el, props }) {
