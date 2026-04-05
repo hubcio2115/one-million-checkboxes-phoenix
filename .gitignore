@@ -27,6 +27,7 @@ million_checkboxes-*.tar
 
 # Ignore assets that are produced by build tools.
 /priv/static/assets/
+/priv/ssr.js
 
 # Ignore digested assets cache.
 /priv/static/cache_manifest.json
@@ -35,3 +36,4 @@ million_checkboxes-*.tar
 npm-debug.log
 /assets/node_modules/
 
+.DS_Store
