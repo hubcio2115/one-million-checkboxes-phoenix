@@ -1,4 +1,4 @@
-defmodule MillionCheckboxesWeb.CheckboxChannel do
+defmodule MillionCheckboxesWeb.CheckboxesChannel do
   alias MillionCheckboxes.BoolStore
   use Phoenix.Channel
 

@@ -18,7 +18,7 @@ defmodule MillionCheckboxesWeb.Router do
   scope "/", MillionCheckboxesWeb do
     pipe_through :browser
 
-    get "/", ProfileController, :index
+    get "/", PageController, :index
   end
 
   # Other scopes may use custom stacks.
