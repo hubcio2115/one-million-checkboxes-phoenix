@@ -81,7 +81,7 @@ export function CheckboxGrid({ checkboxes, rowsPerChunk }: CheckboxGridProps) {
   });
 
   return (
-    <div className="relative h-125 w-full border border-[#ccc]">
+    <div className="relative h-125 w-full">
       <div ref={parentRef} className="h-full w-full overflow-auto">
         <InfiniteScroll data="checkboxes" onlyNext buffer={5}>
           {({ loading }) => (
@@ -104,7 +104,7 @@ export function CheckboxGrid({ checkboxes, rowsPerChunk }: CheckboxGridProps) {
                         defaultChecked={getBit(byteBuffer.current, index)}
                         key={`${virtualRow.index}-${virtualColumn.index}`}
                         data-index={index}
-                        className="absolute top-0 left-0 size-7.5"
+                        className="absolute top-0 left-0 size-7.5 accent-pink-500"
                         style={{
                           transform: `translateX(${virtualColumn.start}px) translateY(${virtualRow.start}px)`,
                         }}
