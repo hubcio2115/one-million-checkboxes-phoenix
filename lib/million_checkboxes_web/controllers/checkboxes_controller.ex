@@ -2,6 +2,7 @@ defmodule MillionCheckboxesWeb.CheckboxController do
   alias MillionCheckboxes.BitPacker
   alias MillionCheckboxes.BoolStore
   alias Ecto.Changeset
+
   use MillionCheckboxesWeb, :controller
 
   @search_types %{
