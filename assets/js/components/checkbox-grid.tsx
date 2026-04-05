@@ -1,7 +1,8 @@
 import { InfiniteScroll } from "@inertiajs/react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type ChangeEvent } from "react";
 import { base64ToBuffer, getBit, setBit } from "~/lib/binary-utils";
+import { useCheckboxChannel } from "~/lib/useCheckboxChannel";
 import { Spinner } from "./ui/spinner";
 
 /** 1_000_000 / 8 bits  */
@@ -25,6 +26,21 @@ interface CheckboxGridProps {
 
 export function CheckboxGrid({ checkboxes, rowsPerChunk }: CheckboxGridProps) {
   const { data: chunks } = checkboxes;
+
+  const socket = useCheckboxChannel([
+    "checked",
+    (resp: { index: number; checked: boolean }) => {
+      setBit(byteBuffer.current, resp.index, resp.checked);
+      const el = parentRef.current?.querySelector<HTMLInputElement>(`[data-index="${resp.index}"]`);
+      if (el) el.checked = resp.checked;
+    },
+  ]);
+
+  function onChecked(e: ChangeEvent<HTMLInputElement>, index: number) {
+    setBit(byteBuffer.current, index, e.target.checked);
+
+    socket.current?.push("checked", { index, checked: e.target.checked });
+  }
 
   const initialBuffer = (() => {
     const buf = new Uint8Array(TOTAL_BYTES);
@@ -84,9 +100,10 @@ export function CheckboxGrid({ checkboxes, rowsPerChunk }: CheckboxGridProps) {
                     return (
                       <input
                         type="checkbox"
-                        onChange={(e) => setBit(byteBuffer.current, index, e.target.checked)}
+                        onChange={(e) => onChecked(e, index)}
                         defaultChecked={getBit(byteBuffer.current, index)}
                         key={`${virtualRow.index}-${virtualColumn.index}`}
+                        data-index={index}
                         className="absolute top-0 left-0 size-7.5"
                         style={{
                           transform: `translateX(${virtualColumn.start}px) translateY(${virtualRow.start}px)`,
