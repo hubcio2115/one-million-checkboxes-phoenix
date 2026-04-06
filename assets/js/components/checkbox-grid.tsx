@@ -1,6 +1,6 @@
 import { InfiniteScroll } from "@inertiajs/react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { useEffect, useRef, type ChangeEvent } from "react";
+import { useEffect, useMemo, useRef, type ChangeEvent } from "react";
 import { base64ToBuffer, getBit, setBit } from "~/lib/binary-utils";
 import { useCheckboxChannel } from "~/lib/useCheckboxChannel";
 import { Spinner } from "./ui/spinner";
@@ -42,11 +42,11 @@ export function CheckboxGrid({ checkboxes, rowsPerChunk }: CheckboxGridProps) {
     socket.current?.push("checked", { index, checked: e.target.checked });
   }
 
-  const initialBuffer = (() => {
+  const initialBuffer = useMemo(() => {
     const buf = new Uint8Array(TOTAL_BYTES);
     buf.set(base64ToBuffer(chunks[0]), 0);
     return buf;
-  })();
+  }, []);
 
   // First chunk is already in the buffer from the promise above.
   const byteBuffer = useRef(initialBuffer);
