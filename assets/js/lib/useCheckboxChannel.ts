@@ -12,9 +12,7 @@ export function useCheckboxChannel(...listeners: Parameters<Channel["on"]>[]) {
 
     channel
       .join()
-      .receive("ok", (resp) => {
-        console.log(resp);
-      })
+      .receive("ok", (_resp) => {})
       .receive("error", (err) => {
         console.error(err);
       });
